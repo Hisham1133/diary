@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+function startTime() {
+  var today = new Date();
+  var h = today.getHours();
+  var m = today.getMinutes();
+  var s = today.getSeconds();
+  m = checkTime(m);
+  s = checkTime(s);
+  document.getElementById('txt').innerHTML =
+  h + ":" + m + ":" + s;
+  var t = setTimeout(startTime, 500);
+}
+function checkTime(i) {
+  if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+  return i;
+}
+</script>
+<style>
+	 body{
+	   background-image:url("https://previews.123rf.com/images/nathiyai/nathiyai1707/nathiyai170700101/83924755-pink-carnation-flowers-on-white-wood-background-with-copy-space.jpg");
+	   }
+	#blink{
+
+    	animation:blinkingText 1.5s infinite;
+
+		}
+		@keyframes blinkingText{
+  	    0%{     color: green;    }
+   	    100%{    color: transparent; }
+   	    100%{    color: transparent; }
+    	99%{    color:transparent;  }
+  	    100%{   color: #000;    }
+		}
+		.vl {
+ 	 	border-left: 6px solid black;
+  		height: 650px;
+  		position: absolute;
+  		top: 40px;
+		}
+
+</style>
+
+<meta name="viewport" content="width = 1050, user-scalable = no" />
+
+<script type="text/javascript" src="jquery.min.1.7.js"></script>
+<script type="text/javascript" src="modernizr.2.5.3.min.js"></script>
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='basic.css') }}"/>
+<link type="text/script" rel="script" href="{{ url_for('static', filename='turn.js') }}"/>
+<link type="text/script" rel="script" href="{{ url_for('static', filename='turn.html4.min.js') }}"/>
+</head>
+<body onload="startTime()">
+
+		{% with messages = get_flashed_messages() %}
+		 {% if messages %}
+		 <script>
+			 window.alert("Welcome to diary page {{nam}}");
+		 </script>
+		 {% endif %}
+		 {% endwith %}
+
+<div class="flipbook-viewport">
+	<div class="container">
+		<div class="flipbook">
+			<div style="background-image:url(https://s3.amazonaws.com/poly-screenshots.angel.co/Project/a0/422078/49cf4e505464c18e0f1201832d1b01ec-original.png)"></div>
+			   <div style="background-color: #eeffcc;"><div id="txt" style="position:relative;left:300px;top:40px;font-size: 25px"></div>
+					<p style="position:relative;left:50px;font-size: 25px;top:-10px" id="blink">Hi {{user}}</p>
+
+				  		 <h2 style="margin: 20px;position:relative;left:90px"> Write your Diary </h2>
+				   <div style = "margin: 20px;">
+					   &ensp;&ensp; &ensp;&ensp;View Diary on: <input type = "date" id="dte" name = "dte" value={{T}} style="position:relative;left:10px" />
+					   <button name = "btn" id="btn"  class = "prev_btn" style="position:relative;left:30px" >Preview</button>
+				   </div>
+
+				   <input id="myDate" type = "date"  name = "dte" style="visibility:hidden; "  value={{T}} />
+				   <textarea style="margin: 20px;" rows = 20 cols = 50 id="cont" name="cont" >{{myresult}}</textarea>
+				   <div style = "margin: 20px;position:relative;bottom:30px;left:50px">
+					   <button name = "btn1" id = "btn1" style="position:relative;left:100px" >Submit</button>
+					   </br>
+				   </div>
+			   </div>
+
+			<div >
+				<hr style="height:3px; color:red; background-color:#000; width:100%; text-align:center; margin: 0;position:relative;top:40px;">
+				<div class="vl" style="background-color:#ffe6ff; width:100%;">
+				<div style = "margin: 20px;font-style:italic;" id="response">
+                          {{myresult}}
+				</div>
+				</div>
+			</div>
+
+
+
+			<div style="background-image:url(http://clipart-library.com/images/BigrqrM8T.jpg)"></div>
+
+		</div>
+	</div>
+</div>
+
+<a href="{{ url_for('appfile3.logout') }}" class="log" style=" position: absolute;left: 1200px;top: 25px;">
+          <span class="glyphicon glyphicon-log-out"></span> Log out</a>
+<script type="text/javascript">
+
+function loadApp() {
+	$('.flipbook').turn({
+
+			width:922,
+			height:600,
+			elevation: 50,
+			gradients: true,
+			autoCenter: true
+	});
+	$('.flipbook').bind("turning", function(event, page, view) {
+  		var date=document.getElementById('myDate').value;
+
+
+	});
+	$('.flipbook').bind("turned", function(event, page, view) {
+  		console.log(event);
+	});
+
+}
+
+// Load the HTML4 version if there's not CSS transform
+
+yepnope({
+	test : Modernizr.csstransforms,
+	yep: ['turn.js'],
+	nope: ['turn.html4.min.js'],
+	both: ['basic.css'],
+	complete: loadApp
+});
+
+</script>
+<script type="text/javascript">
+
+      $('button#btn').click(function(){
+      res=document.getElementById("dte").value;
+	  console.log(res);
+        $.ajax({
+            url: "/dbfetch",
+            data: res,
+            type: "POST",
+            success: function(resp){
+			console.log(resp)
+			console.log(resp.replace(/['"]+/g, ''));
+			 resp=resp.replace(/['"]+/g, '')
+             document.getElementById("response").innerHTML = resp
+			 document.getElementById("cont").innerHTML = resp
+            }
+        });
+      });
+  </script>
+  <script type="text/javascript">
+
+      $('button#btn1').click(function(){
+      res=document.getElementById("cont").value;
+      res1=document.getElementById("dte").value;
+	  console.log(res);
+        $.ajax({
+            url: "/submit",
+            data: {res:res,res1:res1},
+            type: "POST",
+            success: function(resp){
+			console.log(resp)
+			console.log(resp.replace(/['"]+/g, ''));
+			 resp=resp.replace(/['"]+/g, '')
+             document.getElementById("response").innerHTML = resp
+			 document.getElementById("response1").innerHTML = resp
+            }
+        });
+      });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+<html lang="en">
+	<head>
+		  <meta charset="utf-8">
+		  <meta name="viewport" content="width=device-width, initial-scale=1">
+	  <style>
+	   body{
+	   background-image:url("https://www.featurepics.com/StockImage/20080501/light-blue-wavy-soothing-background-stock-illustration-709529.jpg");
+	   }
+	    .layout
+		{
+		  width:80%;
+		  text-align:center;
+		 }
+		.prev_btn
+		 {
+		   width: 80px;
+		   height:35px;
+		   margin-left:5px;
+		 }
+		 .nav_btn_left
+		 {
+		   width: 80px;
+		   height:35px;
+		   margin:10%;
+		   float:left;
+		 }
+		 .nav_btn_right
+		 {
+		   width: 80px;
+		   height:35px;
+		   margin:8%;
+		   float:right;
+		 }
+		 .pub_btn
+		 {
+		   width: 80px;
+		   height:35px;
+		   text-align:center;
+		   margin-right:25%;
+		 }
+         @keyframes blinkingText{
+   			 0%{     color: red;    }
+    		 49%{    color: transparent; }
+   			 50%{    color: transparent; }
+   			 99%{    color:transparent;  }
+   		     100%{   color: #000;    }
+		 }
+
+	  </style>
+
+		 <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+    </head>
+	 <body>
+	     <!-- Previous date diary display -->
+		<p id="blink">{{user}}</p>
+	   <div class = "layout">
+	    <form action="{{ url_for('appfile.prev_date') }}"  method = "POST">
+
+			 View Diary on: <input type = "date"  name = "dte" value={{T}} />
+			<input type = "submit"  name = "btn" class = "prev_btn" value = "Preview" />
+
+		</form>
+
+		<h2> Write your Diary </h2>
+           <span name="mySpan"></span>
+		<script>
+		   var d = new Date();
+		   document.write(d.toLocaleDateString());
+		      <!-- To generate current date -->
+          $('.log').click(function() {
+    $.ajax({
+        url: "",
+        context: document.body,
+        success: function(s,x){
+
+            $('html[manifest=saveappoffline.appcache]').attr('content', '');
+                $(this).html(s);
+        }
+    });
+});
+
+		</script>
+
+			 <!-- Dairy navigation buttons -->
+			<a href="/prevfetch" class="btn btn-info btn-lg" style=" position: absolute;left: 75px;top: 300px;">
+          <span class="glyphicon glyphicon-log-out"></span> prev
+        </a>
+
+
+				<!--<form action ="http://localhost:5000/nxtfetch" method="post">-->
+		     <a href="/nxtfetch" class="btn btn-info btn-lg" style=" position: absolute;left: 1000px;top: 285px;">
+          <span class="glyphicon glyphicon-log-out"></span> next
+        </a>
+
+			<!--</form>-->
+
+			 <!-- Dairy Entry page here -->
+		<form action="{{ url_for('appfile.submit_diary') }}"  method = "POST">
+
+			 <input type = "date"  name = "dte" style="visibility:hidden; "  value={{T}} />
+				<textarea rows = 20 cols = 50 name="cont" >{% for item in myresult %}
+
+     {{item[1]}}
+
+{% endfor %} </textarea>
+				<br><br><input type = "submit" class = "pub_btn" value="Publish"></br></br>
+
+
+		</form>
+
+
+	    </div>
+
+        <a href="{{ url_for('appfile6.logoutfacebook') }}" class="log" style=" position: absolute;left: 1000px;top: 50px;">
+          <span class="glyphicon glyphicon-log-out"></span> Log out
+        </a>
+
+
+
+ </body>
+</html>
